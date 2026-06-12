@@ -6,6 +6,7 @@
   "main": "index.js",
   "exports": {
     ".": "./index.js",
+    "./adapters": "./lib/adapters.js",
     "./token-tracker": "./lib/token-tracker.js",
     "./budget-monitor": "./lib/budget-monitor.js",
     "./kill-switch": "./lib/kill-switch.js",
