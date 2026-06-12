@@ -1,0 +1,12 @@
+{
+  "name": "token-budgets",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Zero-overhead token budget monitoring for autonomous AI agents",
+  "main": "lib/token-tracker.js",
+  "scripts": {
+    "demo": "node demo.js"
+  },
+  "keywords": ["token", "budget", "ai", "agent", "monitoring"],
+  "license": "MIT"
+}
