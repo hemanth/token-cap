@@ -8,5 +8,10 @@
     "demo": "node demo.js"
   },
   "keywords": ["token", "budget", "ai", "agent", "monitoring"],
+  "author": "Hemanth HM <hemanth.hm@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hemanth/token-budgets"
+  },
   "license": "MIT"
 }

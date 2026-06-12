@@ -2,6 +2,8 @@
 
 Zero-overhead token budget monitoring for autonomous AI agents.
 
+Companion code for the blog post: [Building Kill-Switches for Autonomous AI Agents](https://h3manth.com/scribe/zero-overhead-token-budgets/)
+
 ## Quick Start
 
 ```bash
@@ -22,7 +24,7 @@ The demo simulates a 20-turn autonomous agent session across three phases:
 | 🟡 Degrading | 11–15 | Rising tokens, repeated file reads |
 | 🔴 Rogue | 16–20 | Same tool/args loop, reasoning bloat |
 
-The budget monitor fires warnings at **50%** and **75%**, and the kill-switch trips at **turn 17** when multiple circuit-breaker rules fire simultaneously.
+The budget monitor fires warnings at **50%** and **75%**, and the kill-switch trips when the cost ceiling is breached — stopping the session before the rogue loop can drain the remaining budget.
 
 ## Architecture
 

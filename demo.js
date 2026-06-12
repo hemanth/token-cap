@@ -108,7 +108,7 @@ for (let i = 0; i < 20; i++) {
   console.log(`${c.dim}         │${c.reset} ${bar(percentUsed)} ${c.dim}(${remaining.toLocaleString()} remaining)${c.reset}`);
 
   // Cost
-  console.log(`${c.dim}         │ cost: $${cost.total.toFixed(4)}${c.reset}`);
+  console.log(`${c.dim}         │ cost: $${cost.total.toFixed(2)}${c.reset}`);
 
   // Kill-switch
   const { safe, violations } = killSwitch.evaluate(record, cost);
@@ -136,6 +136,6 @@ const finalCost = tracker.getCostEstimate();
 console.log(`${c.cyan}${c.bold}── Session Summary ─────────────────────────────────────────${c.reset}`);
 console.log(`  ${c.bold}Turns:${c.reset}     ${tracker.turnCount}`);
 console.log(`  ${c.bold}Tokens:${c.reset}    ${final.total.toLocaleString()} (in:${final.input.toLocaleString()} out:${final.output.toLocaleString()} reasoning:${final.reasoning.toLocaleString()})`);
-console.log(`  ${c.bold}Est. cost:${c.reset} $${finalCost.total.toFixed(4)}`);
+console.log(`  ${c.bold}Est. cost:${c.reset} $${finalCost.total.toFixed(2)}`);
 console.log(`  ${c.bold}Outcome:${c.reset}   ${killed ? `${c.red}KILLED by circuit breaker${c.reset}` : `${c.green}Completed${c.reset}`}`);
 console.log('');
