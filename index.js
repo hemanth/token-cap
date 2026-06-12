@@ -1,4 +1,4 @@
-export { tokenBudget } from './lib/token-budget.js';
+export { tokenCap } from './lib/token-cap.js';
 export { TokenTracker } from './lib/token-tracker.js';
 export { BudgetMonitor } from './lib/budget-monitor.js';
 export { KillSwitch } from './lib/kill-switch.js';

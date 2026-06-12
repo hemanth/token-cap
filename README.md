@@ -1,17 +1,17 @@
-# token-budget
+# token-cap
 
 Token budget monitoring and kill-switches for autonomous AI agents. Zero dependencies.
 
 ```bash
-npm install token-budget
+npm install token-cap
 ```
 
 ## Quick start
 
 ```js
-import { tokenBudget, fromOpenAI } from 'token-budget';
+import { tokenCap, fromOpenAI } from 'token-cap';
 
-const budget = tokenBudget({ maxTokens: 500_000, maxCost: 5.00 });
+const budget = tokenCap({ maxTokens: 500_000, maxCost: 5.00 });
 
 const response = await openai.chat.completions.create({ model: 'gpt-4o', messages });
 budget.record(fromOpenAI(response));
@@ -26,7 +26,7 @@ if (!budget.ok) console.log(budget.reason);
 One adapter per provider. Each returns `{ input, output, reasoning }`:
 
 ```js
-import { fromOpenAI, fromGemini, fromAnthropic, fromOllama, fromRaw } from 'token-budget';
+import { fromOpenAI, fromGemini, fromAnthropic, fromOllama, fromRaw } from 'token-cap';
 
 budget.record(fromOpenAI(response));     // OpenAI, Groq, Together, Fireworks, LM Studio
 budget.record(fromGemini(response));     // Google AI Studio, Vertex
@@ -37,7 +37,7 @@ budget.record(fromRaw(3200, 800, 5400)); // raw numbers
 
 Works with any provider that returns token counts. If yours isn't listed, use `fromRaw()`.
 
-## What `tokenBudget()` gives you
+## What `tokenCap()` gives you
 
 ```js
 budget.ok        // should the agent continue?
@@ -52,7 +52,7 @@ budget.analyze() // run anomaly detection
 ## Config
 
 ```js
-const budget = tokenBudget({
+const budget = tokenCap({
   maxTokens: 500_000,          // token ceiling
   maxCost: 5.00,               // dollar ceiling
   maxDuplicateCalls: 3,        // identical tool calls before kill
@@ -75,7 +75,7 @@ budget.on('tripped', (e) => console.error(e.violations)); // circuit breaker fir
 If you need more control, the internals are exported too:
 
 ```js
-import { TokenTracker, BudgetMonitor, KillSwitch, AnomalyDetector } from 'token-budget';
+import { TokenTracker, BudgetMonitor, KillSwitch, AnomalyDetector } from 'token-cap';
 ```
 
 ## Demo
@@ -89,7 +89,7 @@ Simulates 20 turns across healthy → degrading → rogue phases. Kill-switch tr
 ## Related
 
 - [Feature request on Antigravity SDK](https://github.com/google-antigravity/antigravity-sdk-python/issues/59)
-- [Blog: Building Kill-Switches for Autonomous AI Agents](https://h3manth.com/scribe/zero-overhead-token-budget/)
+- [Blog: Building Kill-Switches for Autonomous AI Agents](https://h3manth.com/scribe/zero-overhead-token-cap/)
 
 ## License
 
