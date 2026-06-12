@@ -1,5 +1,5 @@
 {
-  "name": "token-cap",
+  "name": "token-limiter",
   "version": "1.0.0",
   "type": "module",
   "description": "Framework-agnostic token budget monitoring and kill-switches for autonomous AI agents. Works with any LLM provider.",
@@ -20,7 +20,7 @@
   "author": "Hemanth HM <hemanth.hm@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/hemanth/token-cap"
+    "url": "https://github.com/hemanth/token-limiter"
   },
   "engines": {
     "node": ">=18.0.0"
