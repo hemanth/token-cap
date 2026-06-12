@@ -3,15 +3,26 @@
   "version": "1.0.0",
   "type": "module",
   "description": "Framework-agnostic token budget monitoring and kill-switches for autonomous AI agents. Works with any LLM provider.",
-  "main": "lib/token-tracker.js",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./token-tracker": "./lib/token-tracker.js",
+    "./budget-monitor": "./lib/budget-monitor.js",
+    "./kill-switch": "./lib/kill-switch.js",
+    "./anomaly-detector": "./lib/anomaly-detector.js"
+  },
+  "files": ["lib/", "index.js", "README.md", "LICENSE"],
   "scripts": {
-    "demo": "node demo.js"
+    "demo": "node examples/demo.js"
   },
   "keywords": ["token", "budget", "ai", "agent", "monitoring"],
   "author": "Hemanth HM <hemanth.hm@gmail.com>",
   "repository": {
     "type": "git",
     "url": "https://github.com/hemanth/token-budgets"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   },
   "license": "MIT"
 }

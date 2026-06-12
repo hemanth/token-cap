@@ -1,7 +1,7 @@
-import { TokenTracker } from './lib/token-tracker.js';
-import { BudgetMonitor } from './lib/budget-monitor.js';
-import { KillSwitch } from './lib/kill-switch.js';
-import { AnomalyDetector } from './lib/anomaly-detector.js';
+import { TokenTracker } from '../lib/token-tracker.js';
+import { BudgetMonitor } from '../lib/budget-monitor.js';
+import { KillSwitch } from '../lib/kill-switch.js';
+import { AnomalyDetector } from '../lib/anomaly-detector.js';
 
 // ── ANSI helpers ─────────────────────────────────────────────
 const c = {
