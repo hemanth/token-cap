@@ -9,23 +9,17 @@ npm install token-budgets
 ## Quick start
 
 ```js
-import { TokenTracker, BudgetMonitor, KillSwitch, fromOpenAI } from 'token-budgets';
+import { tokenBudget, fromOpenAI } from 'token-budgets';
 
-const tracker = new TokenTracker();
-const budget = new BudgetMonitor({ maxTokens: 500_000, maxCost: 5.00 });
-const killSwitch = new KillSwitch({ maxCost: 5.00 });
+const budget = tokenBudget({ maxTokens: 500_000, maxCost: 5.00 });
 
-// After each LLM call, feed the response through an adapter
 const response = await openai.chat.completions.create({ model: 'gpt-4o', messages });
-const record = tracker.recordTurn(fromOpenAI(response));
+budget.record(fromOpenAI(response));
 
-const { allowed } = budget.checkBudget(tracker.getCumulativeUsage(), tracker.getCostEstimate());
-const { safe } = killSwitch.evaluate(record, tracker.getCostEstimate());
-
-if (!allowed || !safe) agent.stop();
+if (!budget.ok) console.log(budget.reason);
 ```
 
-`fromOpenAI()` maps the response to `{ input, output, reasoning }`. `recordTurn()` logs it. `checkBudget()` enforces ceilings. `evaluate()` runs the circuit breaker.
+`fromOpenAI()` maps the response to `{ input, output, reasoning }`. `record()` tracks it, checks the ceiling, runs the circuit breaker. `ok` tells you if the agent should continue.
 
 ## Adapters
 
@@ -34,80 +28,55 @@ One adapter per provider. Each returns `{ input, output, reasoning }`:
 ```js
 import { fromOpenAI, fromGemini, fromAnthropic, fromOllama, fromRaw } from 'token-budgets';
 
-tracker.recordTurn(fromOpenAI(response));     // OpenAI, Groq, Together, Fireworks, LM Studio
-tracker.recordTurn(fromGemini(response));     // Google AI Studio, Vertex
-tracker.recordTurn(fromAnthropic(response));  // Claude
-tracker.recordTurn(fromOllama(response));     // Ollama, any local model
-tracker.recordTurn(fromRaw(3200, 800, 5400)); // raw numbers
+budget.record(fromOpenAI(response));     // OpenAI, Groq, Together, Fireworks, LM Studio
+budget.record(fromGemini(response));     // Google AI Studio, Vertex
+budget.record(fromAnthropic(response));  // Claude
+budget.record(fromOllama(response));     // Ollama, any local model
+budget.record(fromRaw(3200, 800, 5400)); // raw numbers
 ```
 
 Works with any provider that returns token counts. If yours isn't listed, use `fromRaw()`.
 
-## Token tracking
+## What `tokenBudget()` gives you
 
 ```js
-const tracker = new TokenTracker({
-  inputRate: 0.00125,     // $/1K tokens — configure for your provider
-  outputRate: 0.01,
-  reasoningRate: 0.0125,
+budget.ok        // should the agent continue?
+budget.reason    // why it stopped, or null
+budget.usage     // { input, output, reasoning, total }
+budget.cost      // { input, output, reasoning, total } in USD
+budget.turns     // number of turns recorded
+budget.history   // full turn history
+budget.analyze() // run anomaly detection
+```
+
+## Config
+
+```js
+const budget = tokenBudget({
+  maxTokens: 500_000,          // token ceiling
+  maxCost: 5.00,               // dollar ceiling
+  maxDuplicateCalls: 3,        // identical tool calls before kill
+  reasoningPctThreshold: 80,   // reasoning % to flag
+  inputRate: 0.00125,          // $/1K input tokens
+  outputRate: 0.01,            // $/1K output tokens
+  reasoningRate: 0.0125,       // $/1K reasoning tokens
 });
-
-tracker.recordTurn({ input: 3200, output: 800, reasoning: 5400 });
-
-tracker.getCumulativeUsage();  // { input, output, reasoning, total }
-tracker.getCostEstimate();     // { input, output, reasoning, total } in USD
-tracker.getHistory();          // every turn with UUID + timestamp
 ```
 
-## Budget ceilings
+## Events
 
 ```js
-const budget = new BudgetMonitor({
-  maxTokens: 500_000,
-  maxCost: 5.00,
-  thresholds: [50, 75, 90],
-});
-
-budget.on('warning',  (e) => console.log(e.message));
-budget.on('critical', (e) => console.log(e.message));
-budget.on('killed',   (e) => stopAgent(e.reason));
-
-const { allowed, remaining, percentUsed } = budget.checkBudget(usage, cost);
+budget.on('warning', (e) => console.log(e.message));   // 50%, 75%, 90% thresholds
+budget.on('tripped', (e) => console.error(e.violations)); // circuit breaker fired
 ```
 
-## Kill-switch
+## Individual modules
 
-Four circuit-breaker rules:
+If you need more control, the internals are exported too:
 
 ```js
-const ks = new KillSwitch({
-  maxTokensPerTurn: 40_000,
-  velocityWindow: 5,
-  maxDuplicateCalls: 3,
-  maxCost: 10.00,
-  reasoningPctThreshold: 80,
-  reasoningWindow: 3,
-});
-
-ks.on('tripped', ({ violations }) => console.error(violations));
-const { safe, violations } = ks.evaluate(turnRecord, costEstimate);
+import { TokenTracker, BudgetMonitor, KillSwitch, AnomalyDetector } from 'token-budgets';
 ```
-
-- **Velocity** — massive context every turn, likely re-reading the codebase
-- **Degenerate loop** — same tool + args called N times in a row
-- **Cost ceiling** — hard dollar backstop
-- **Reasoning runaway** — model thinking hard, producing nothing
-
-## Anomaly detection
-
-```js
-import { AnomalyDetector } from 'token-budgets';
-
-const detector = new AnomalyDetector({ windowSize: 5 });
-const { anomalies, score, recommendation } = detector.analyze(tracker.getHistory());
-```
-
-`score` goes from 0 (healthy) to 1 (degenerate).
 
 ## Demo
 
