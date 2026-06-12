@@ -2,7 +2,7 @@
   "name": "token-budgets",
   "version": "1.0.0",
   "type": "module",
-  "description": "Zero-overhead token budget monitoring for autonomous AI agents",
+  "description": "Framework-agnostic token budget monitoring and kill-switches for autonomous AI agents. Works with any LLM provider.",
   "main": "lib/token-tracker.js",
   "scripts": {
     "demo": "node demo.js"
