@@ -1,15 +1,15 @@
-# token-budgets
+# token-budget
 
 Token budget monitoring and kill-switches for autonomous AI agents. Zero dependencies.
 
 ```bash
-npm install token-budgets
+npm install token-budget
 ```
 
 ## Quick start
 
 ```js
-import { tokenBudget, fromOpenAI } from 'token-budgets';
+import { tokenBudget, fromOpenAI } from 'token-budget';
 
 const budget = tokenBudget({ maxTokens: 500_000, maxCost: 5.00 });
 
@@ -26,7 +26,7 @@ if (!budget.ok) console.log(budget.reason);
 One adapter per provider. Each returns `{ input, output, reasoning }`:
 
 ```js
-import { fromOpenAI, fromGemini, fromAnthropic, fromOllama, fromRaw } from 'token-budgets';
+import { fromOpenAI, fromGemini, fromAnthropic, fromOllama, fromRaw } from 'token-budget';
 
 budget.record(fromOpenAI(response));     // OpenAI, Groq, Together, Fireworks, LM Studio
 budget.record(fromGemini(response));     // Google AI Studio, Vertex
@@ -75,7 +75,7 @@ budget.on('tripped', (e) => console.error(e.violations)); // circuit breaker fir
 If you need more control, the internals are exported too:
 
 ```js
-import { TokenTracker, BudgetMonitor, KillSwitch, AnomalyDetector } from 'token-budgets';
+import { TokenTracker, BudgetMonitor, KillSwitch, AnomalyDetector } from 'token-budget';
 ```
 
 ## Demo
@@ -89,7 +89,7 @@ Simulates 20 turns across healthy → degrading → rogue phases. Kill-switch tr
 ## Related
 
 - [Feature request on Antigravity SDK](https://github.com/google-antigravity/antigravity-sdk-python/issues/59)
-- [Blog: Building Kill-Switches for Autonomous AI Agents](https://h3manth.com/scribe/zero-overhead-token-budgets/)
+- [Blog: Building Kill-Switches for Autonomous AI Agents](https://h3manth.com/scribe/zero-overhead-token-budget/)
 
 ## License
 
